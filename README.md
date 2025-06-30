@@ -12,8 +12,12 @@ The code and related data are currently being organized and will be released onc
 
 FID_k:12.92  FID_g:14.38  Div_k:8.24  Div_g:7.44  BAS:0.2902
 
+## Environment
 
 
+## Data preparation
+
+In our experiments, we use AIST++ for both training and evaluation. You can pre-process the data based on the dataset provided by [Bailando](https://github.com/lisiyao21/Bailando) or use the already processed data we have saved at [huggingface](https://huggingface.co/datasets/penguinway/danceba).
 
 ## Acknowledgement
 
