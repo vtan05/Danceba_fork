@@ -27,9 +27,9 @@ If you find our work useful in your research, please consider giving a star :sta
 
 ```bibTeX
 @article{fan2025align,
-          title={Align Your Rhythm: Generating Highly Aligned Dance Poses with Gating-Enhanced Rhythm-Aware Feature Representation},
-          author={Fan, Congyi and Guan, Jian and Zhao, Xuanjia and Xu, Dongli and Lin, Youtian and Ye, Tong and Feng, Pengming and Pan, Haiwei},
-          journal={arXiv preprint arXiv:2503.17340},
-          year={2025}
-        }
+      title={Align Your Rhythm: Generating Highly Aligned Dance Poses with Gating-Enhanced Rhythm-Aware Feature Representation},
+      author={Fan, Congyi and Guan, Jian and Zhao, Xuanjia and Xu, Dongli and Lin, Youtian and Ye, Tong and Feng, Pengming and Pan, Haiwei},
+      journal={arXiv preprint arXiv:2503.17340},
+      year={2025}
+    }
 ```
