@@ -15,4 +15,19 @@ FID_k:12.92  FID_g:14.38  Div_k:8.24  Div_g:7.44  BAS:0.2902
 
 
 
-Acknowledgement
+## Acknowledgement
+
+
+
+## Citation
+If you find our work useful in your research, please consider giving a star :star: and citing the following paper :pencil:.
+
+```bibTeX
+  @article{fan2025align,
+    title={Align Your Rhythm: Generating Highly Aligned Dance Poses with Gating-Enhanced Rhythm-Aware Feature Representation},
+    author={Fan, Congyi and Guan, Jian and Zhao, Xuanjia and Xu, Dongli and Lin, Youtian and Ye, Tong and Feng, Pengming and Pan, Haiwei},
+    journal={arXiv preprint arXiv:2503.17340},
+    year={2025}
+  }
+      }
+```
