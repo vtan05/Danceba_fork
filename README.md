@@ -1,9 +1,9 @@
 <h2 align="center"> <a href="https://arxiv.org/abs/2503.17340">Align Your Rhythm: Generating Highly Aligned Dance Poses with Gating-Enhanced  <a href="https://arxiv.org/abs/2503.17340"> Rhythm-Aware Feature Representation </a>
 
-<h4 align="center">
-  
-  <span style="color: red; font-weight: bold;">★ ICCV 2025 Accept ★</span>
-</h4>
+<h3 align="center">
+  <font color="red"><b>★ ICCV 2025 Accept ★</b></font>
+</h3>
+
 
 <h5 align="center">
 
