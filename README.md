@@ -1,7 +1,10 @@
 <h2 align="center"> <a href="https://arxiv.org/abs/2503.17340">Align Your Rhythm: Generating Highly Aligned Dance Poses with Gating-Enhanced  <a href="https://arxiv.org/abs/2503.17340"> Rhythm-Aware Feature Representation </a>
 
-<h5 align="center">
+<h4 align="center">
+  <span style="color: red; font-weight: bold;">★ ICCV 2025 Accept ★</span>
+</h4>
 
+<h5 align="center">
 [![arXiv](https://img.shields.io/badge/Arxiv-2503.17340-b31b1b.svg?logo=arXiv)](https://arxiv.org/abs/2503.17340) [![Gradio](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/datasets/penguinway/danceba) 
 [![Home Page](https://img.shields.io/badge/Project-Website-green.svg)](https://danceba.github.io/)
 </h5>
