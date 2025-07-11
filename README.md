@@ -20,8 +20,24 @@ The code is currently being organized and will be released once the preparation 
 ## Environment
 
 ```
-
+conda create -n danceba python=3.10
+conda activate danceba
+conda install -c nvidia cuda-nvcc=11.8.89
+pip install torch==2.1.1+cu118 torchvision==0.16.1+cu118 torchaudio==2.1.1+cu118 --index-url https://download.pytorch.org/whl/cu118
+conda install cudatoolkit=11.8 # 适合pytorch: 2.0.0，2.0.1，2.1.0，2.1.1，2.1.2，2.2.0，2.2.1
+pip install xformers==0.0.23
+pip install numpy==1.26 -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
+
+### Mamba Environment
+```
+wget https://github.com/Dao-AILab/causal-conv1d/releases/download/v1.1.3.post1/causal_conv1d-1.1.3.post1+cu118torch2.1cxx11abiFALSE-cp310-cp310-linux_x86_64.whl
+wget https://github.com/state-spaces/mamba/releases/download/v1.1.1/mamba_ssm-1.1.1+cu118torch2.1cxx11abiFALSE-cp310-cp310-linux_x86_64.whl
+pip install causal_conv1d-1.1.3.post1+cu118torch2.1cxx11abiFALSE-cp310-cp310-linux_x86_64.whl 
+pip install mamba_ssm-1.1.1+cu118torch2.1cxx11abiFALSE-cp310-cp310-linux_x86_64.whl
+```
+
+
 
 ## Data preparation
 
