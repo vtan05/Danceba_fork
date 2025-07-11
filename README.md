@@ -24,7 +24,7 @@ conda create -n danceba python=3.10
 conda activate danceba
 conda install -c nvidia cuda-nvcc=11.8.89
 pip install torch==2.1.1+cu118 torchvision==0.16.1+cu118 torchaudio==2.1.1+cu118 --index-url https://download.pytorch.org/whl/cu118
-conda install cudatoolkit=11.8 # 适合pytorch: 2.0.0，2.0.1，2.1.0，2.1.1，2.1.2，2.2.0，2.2.1
+conda install cudatoolkit=11.8
 pip install xformers==0.0.23
 pip install numpy==1.26 -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
