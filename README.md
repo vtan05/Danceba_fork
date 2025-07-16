@@ -43,7 +43,7 @@ pip install mamba_ssm-1.1.1+cu118torch2.1cxx11abiFALSE-cp310-cp310-linux_x86_64.
 
 In our experiments, we use AIST++ for both training and evaluation. You can pre-process the data based on the dataset provided by [Bailando](https://github.com/lisiyao21/Bailando) or use the already processed data we have saved at [huggingface](https://huggingface.co/datasets/fancongyi/danceba).
 
-Easy to download
+**Easy to download**
 ```
 ### If the download speed is slow
 # pip install -U huggingface_hub
@@ -53,7 +53,7 @@ Easy to download
 huggingface-cli download --repo-type dataset --resume-download fancongyi/danceba --local-dir <save_path>
 ```
 
-The data and pretrain models are organized in the following format:
+**The data and pretrain models are organized in the following format:**
 ```
   |-experiments
   |  |-cc_motion_gpt
