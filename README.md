@@ -45,10 +45,11 @@ In our experiments, we use AIST++ for both training and evaluation. You can pre-
 
 Easy to download
 ```
-pip install -U huggingface_hub
-pip install hf_transfer
-export HF_HUB_ENABLE_HF_TRANSFER=1
-export HF_ENDPOINT=https://hf-mirror.com
+# If the download speed is slow
+# pip install -U huggingface_hub
+# pip install hf_transfer
+# export HF_HUB_ENABLE_HF_TRANSFER=1
+# export HF_ENDPOINT=https://hf-mirror.com
 huggingface-cli download --repo-type dataset --resume-download penguinway/danceba --local-dir <save_path>
 ```
 
