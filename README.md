@@ -65,7 +65,7 @@ sh srun_gpt_all.sh configs/cc_motion_gpt.yaml train 1
 
 ### 1. Generate dancing results
 
-To test with our pretrained models, please download the weights from [here](https://huggingface.co/datasets/fancongyi/danceba) (huggingface).
+To test with our pretrained models, please download the weights from [huggingface](https://huggingface.co/datasets/fancongyi/danceba).
 
 ```
 sh srun_gpt_all.sh configs/cc_motion_gpt.yaml eval 1
