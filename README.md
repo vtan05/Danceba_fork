@@ -45,7 +45,7 @@ In our experiments, we use AIST++ for both training and evaluation. You can pre-
 
 Easy to download
 ```
-# If the download speed is slow
+### If the download speed is slow
 # pip install -U huggingface_hub
 # pip install hf_transfer
 # export HF_HUB_ENABLE_HF_TRANSFER=1
