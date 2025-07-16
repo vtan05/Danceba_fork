@@ -97,6 +97,7 @@ To test with our pretrained models, please download the weights from [huggingfac
 
 ```
 sh srun_gpt_all.sh configs/cc_motion_gpt.yaml eval 1
+# Due to the optimal weight file being overwritten during training, we sincerely apologize and provide an alternative weight file with comparable performance.
 ```
 
 ### 2. Dance quality evaluations
