@@ -43,7 +43,7 @@ pip install mamba_ssm-1.1.1+cu118torch2.1cxx11abiFALSE-cp310-cp310-linux_x86_64.
 
 In our experiments, we use AIST++ for both training and evaluation. You can pre-process the data based on the dataset provided by [Bailando](https://github.com/lisiyao21/Bailando) or use the already processed data we have saved at [huggingface](https://huggingface.co/datasets/penguinway/danceba).
 
-Easy to download (when internet is bad)
+Easy to download
 ```
 pip install -U huggingface_hub
 pip install hf_transfer
