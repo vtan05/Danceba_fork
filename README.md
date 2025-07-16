@@ -7,7 +7,7 @@
 
 <h5 align="center">
 
-[![arXiv](https://img.shields.io/badge/Arxiv-2503.17340-b31b1b.svg?logo=arXiv)](https://arxiv.org/abs/2503.17340) [![Gradio](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/datasets/penguinway/danceba) 
+[![arXiv](https://img.shields.io/badge/Arxiv-2503.17340-b31b1b.svg?logo=arXiv)](https://arxiv.org/abs/2503.17340) [![Gradio](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/datasets/fancongyi/danceba) 
 [![Home Page](https://img.shields.io/badge/Project-Website-green.svg)](https://danceba.github.io/)
 </h5>
 
