@@ -80,7 +80,7 @@ if __name__ == '__main__':
     # gt_root = '/mnt/lustre/lisiyao1/dance/bailando/aist_features_zero_start'
     # pred_root = '/mnt/lustressd/lisiyao1/dance_experiements/experiments/sep_vqvae_root_global_vel_wav_acc_batch8/vis/pkl/ep000500'
     # pred_root = ''
-    pred_root = '/home/gisp3/Additional_Disk_4T_2/fcy/dancing/opensource/code3/experiments/cc_motion_gpt/eval/pkl/ep000000'
+    pred_root = './experiments/cc_motion_gpt/eval/pkl/ep000000'
     # pred_root = '/mnt/lustre/lisiyao1/dance/bailando/experiments/music_gpt_ds8_lbin512_c512_di3full/eval/pkl/ep000300'
     # pred_root = '/mnt/lustre/lisiyao1/dance/bailando/experiments/music_cross_cond_gpt_ds8_lbin512_c512_di3_init_0.01_beta0.9_full_dim768_3_9_9_ac_reward2_with_entropy_loss_alpha0.5_lr1e-4_no_pretrain/eval/pkl/ep000020'
     # pred_root = '/mnt/lustre/lisiyao1/dance/bailando/experiments/music_cross_cond_gpt_ds8_lbin512_c512_di3_init_0.01_beta0.9_full_dim768_3_9_9_ac_reward2_with_entropy_loss_alpha0.5_lr1e-4_no_pretrain/vis/pkl/ep000300'
