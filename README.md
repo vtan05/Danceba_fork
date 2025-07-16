@@ -41,7 +41,7 @@ pip install mamba_ssm-1.1.1+cu118torch2.1cxx11abiFALSE-cp310-cp310-linux_x86_64.
 
 ## Data preparation
 
-In our experiments, we use AIST++ for both training and evaluation. You can pre-process the data based on the dataset provided by [Bailando](https://github.com/lisiyao21/Bailando) or use the already processed data we have saved at [huggingface](https://huggingface.co/datasets/penguinway/danceba).
+In our experiments, we use AIST++ for both training and evaluation. You can pre-process the data based on the dataset provided by [Bailando](https://github.com/lisiyao21/Bailando) or use the already processed data we have saved at [huggingface](xxx) [New update 2025.7.16].
 
 Easy to download
 ```
@@ -65,7 +65,7 @@ sh srun_gpt_all.sh configs/cc_motion_gpt.yaml train 1
 
 ### 1. Generate dancing results
 
-To test with our pretrained models, please download the weights from [here](https://huggingface.co/datasets/penguinway/danceba) (huggingface).
+To test with our pretrained models, please download the weights from [here](xxx) (huggingface) [New update 2025.7.16].
 
 ```
 sh srun_gpt_all.sh configs/cc_motion_gpt.yaml eval 1
