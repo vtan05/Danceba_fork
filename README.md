@@ -106,6 +106,7 @@ sh srun_gpt_all.sh configs/cc_motion_gpt.yaml eval 1
 After generating the dance in the above step, run the following codes.
 
 ```
+# You will get results consistent with this: 
 # FID_k:12.92  FID_g:14.38  Div_k:8.24  Div_g:7.44  BAS:0.2902
 python utils/metrics_new.py
 python utils/beat_align_score.py
