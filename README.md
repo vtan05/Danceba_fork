@@ -56,28 +56,29 @@ huggingface-cli download --repo-type dataset --resume-download fancongyi/danceba
 
 **The data and pretrain models are organized in the following format:**
 ```
-  |-experiments
-  |  |-cc_motion_gpt
-  |  |  |-ckpt
-  |  |-sep_vqvae
-  |  |  |-ckpt
-  |  |-sep_vqvae_root
-  |  |  |-ckpt
-  |-aist_plusplus_final
-  |  |-all_musics
-  |  |-keypoints2d
-  |  |-splits
-  |  |-keypoints3d
-  |  |-cameras
-  |  |-motions
-  |-data
-  |  |-astpp_music_feat_60fps
-  |  |-aistpp_music_feat_7.5fps
-  |  |-aist_features_zero_start
-  |  |  |-kinetic_features
-  |  |  |-manual_features_new
-  |  |-aistpp_test_full_wav
-  |  |-aistpp_train_wav
+|-Danceba
+    |-experiments
+    |  |-cc_motion_gpt
+    |  |  |-ckpt
+    |  |-sep_vqvae
+    |  |  |-ckpt
+    |  |-sep_vqvae_root
+    |  |  |-ckpt
+    |-aist_plusplus_final
+    |  |-all_musics
+    |  |-keypoints2d
+    |  |-splits
+    |  |-keypoints3d
+    |  |-cameras
+    |  |-motions
+    |-data
+    |  |-astpp_music_feat_60fps
+    |  |-aistpp_music_feat_7.5fps
+    |  |-aist_features_zero_start
+    |  |  |-kinetic_features
+    |  |  |-manual_features_new
+    |  |-aistpp_test_full_wav
+    |  |-aistpp_train_wav
 ```
 
 
