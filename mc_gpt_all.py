@@ -492,7 +492,7 @@ class MCTall():
                 wav_padding=self.config.wav_padding * (self.config.ds_rate // self.config.music_relative_rate) if hasattr(self.config, 'wav_padding') else 0 )
         else:
             train_music_data, train_dance_data = load_data(
-                args_train.train_dir, 
+                data.train_dir, 
                 interval=data.seq_len,
                 data_type=data.data_type)
         self.training_data = prepare_dataloader(train_music_data, train_dance_data, self.config.batch_size)
@@ -515,7 +515,7 @@ class MCTall():
         
         else:    
             music_data, dance_data, dance_names = load_test_data(
-                data.test_dir, interval=None)
+                data.test_dir)
 
         #pdb.set_trace()
 
@@ -545,7 +545,8 @@ class MCTall():
     def _dir_setting(self):
         data = self.config.data
         self.expname = self.config.expname
-        self.experiment_dir = os.path.join("./", "experiments")
+        # self.experiment_dir = '/host_data/van/Danceba/' ### AIST++ dataset
+        self.experiment_dir = '/host_data/van/finedance/'  ### Finedance dataset
         self.expdir = os.path.join(self.experiment_dir, self.expname)
 
         # Helper function to create directories if they don't exist

@@ -125,7 +125,7 @@ def img2video(expdir, epoch, audio_path=None):
 
 
     dance_names = sorted(os.listdir(image_dir))
-    audio_dir = "./aist_plusplus_final/all_musics"  # change
+    audio_dir = "/host_data/van/Danceba/aist_plusplus_final/all_musics"  # change
     
     music_names = sorted(os.listdir(audio_dir))
     
@@ -515,7 +515,7 @@ def load_data(data_dir, interval=900, data_type='2D'):
         with open(path) as f:
             sample_dict = json.loads(f.read())
             np_music = np.array(sample_dict['music_array'])
-            np_dance = np.array(sample_dict['dance_array'])
+            np_dance = np.array(sample_dict['motion_array'])
             if data_type == '2D':
                 # Only use 25 keypoints (x,y) skeleton (basic bone) for 2D
                 np_dance = np_dance[:, :50]
@@ -563,7 +563,7 @@ def load_data_aist(data_dir, interval=120, move=40, rotmat=False, external_wav=N
                     np_music = np.array(sample_dict_wav['music_array']).astype(np.float32)
                     
             
-            np_dance = np.array(sample_dict['dance_array'])
+            np_dance = np.array(sample_dict['motion_array'])
 
             if not rotmat:
                 root = np_dance[:, :3]  # the root
@@ -651,7 +651,7 @@ def load_test_data(data_dir, data_type='2D'):
         with open(path) as f:
             sample_dict = json.loads(f.read())
             np_music = np.array(sample_dict['music_array'])
-            np_dance = np.array(sample_dict['dance_array'])
+            np_dance = np.array(sample_dict['motion_array'])
             if data_type == '2D':
                 # Only use 25 keypoints skeleton (basic bone) for 2D
                 np_dance = np_dance[:, :50]
@@ -689,8 +689,8 @@ def load_test_data_aist(data_dir, rotmat, move, external_wav=None, external_wav_
                     sample_dict_wav = json.loads(ff.read())
                     np_music = np.array(sample_dict_wav['music_array'])
             
-            if 'dance_array' in sample_dict:
-                np_dance = np.array(sample_dict['dance_array'])
+            if 'motion_array' in sample_dict:
+                np_dance = np.array(sample_dict['motion_array'])
                 if not rotmat:
                     root = np_dance[:, :3]  # the root
                     np_dance = np_dance - np.tile(root, (1, 24))  # Calculate relative offset with respect to root
@@ -802,7 +802,7 @@ def check_data_distribution(data_dir, interval=240, rotmat=False):
             # print(path)
             sample_dict = json.loads(f.read())
             np_music = np.array(sample_dict['music_array'])
-            np_dance = np.array(sample_dict['dance_array'])
+            np_dance = np.array(sample_dict['motion_array'])
 
             if not rotmat:
                 root = np_dance[:, :3]  # the root

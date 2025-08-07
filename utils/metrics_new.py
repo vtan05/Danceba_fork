@@ -179,8 +179,8 @@ def calc_and_save_feats(root):
 if __name__ == '__main__':
 
 
-    gt_root = 'data/aist_features_zero_start'
-    pred_root = 'experiments/cc_motion_gpt/eval/pkl/ep000000'
+    gt_root = '/host_data/van/Danceba/data/aist_features_zero_start'
+    pred_root = '/host_data/van/Danceba/cc_motion_gpt/eval/pkl/ep000000'
     print('Calculating and saving features')
     calc_and_save_feats(gt_root)
     calc_and_save_feats(pred_root)
