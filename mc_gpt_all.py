@@ -30,6 +30,7 @@ import torch.nn.functional as F
 # a, b, c, d = check_data_distribution('/mnt/lustre/lisiyao1/dance/dance2/DanceRevolution/data/aistpp_train')
 
 import matplotlib.pyplot as plt
+import time
 
 
 
@@ -265,6 +266,8 @@ class MCTall():
             gpt.load_state_dict(checkpoint['model'])
             gpt.eval()
 
+            starter, ender = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
+
             results = []
             random_id = 0  # np.random.randint(0, 1e4)
             # quants = {}
@@ -312,10 +315,15 @@ class MCTall():
                 # print(music_seq.size())
 
                 # block_size = gpt.module.get_block_size()
-
+                starter.record()
                 zs = gpt.module.sample(x, cond=music_seq, shift=config.sample_shift if hasattr(config, 'sample_shift') else None)
 
                 pose_sample = vqvae.module.decode(zs)
+
+                ender.record()
+                torch.cuda.synchronize()  # wait for kernels to finish
+                elapsed = starter.elapsed_time(ender)  # milliseconds
+                print(f"[Batch {i_eval}] Inference time: {elapsed:.3f} ms")
 
                 # print("pose_sample.shape:", pose_sample.shape)
                 # with open('./keshihua/pose_sample.pkl', 'wb') as f:
@@ -333,6 +341,44 @@ class MCTall():
                     quants_out[self.dance_names[i_eval]] = tuple(zs[ii][0].cpu().data.numpy()[0] for ii in range(len(zs))) 
                 else:
                     quants_out[self.dance_names[i_eval]] = zs[0].cpu().data.numpy()[0]
+                
+            # -------- parameter counting --------
+            from torch.nn.parameter import UninitializedParameter
+
+            def count_params_safe(model, trainable_only=False):
+                total, skipped = 0, 0
+                for p in model.parameters():
+                    if isinstance(p, UninitializedParameter):
+                        skipped += 1
+                        continue
+                    if trainable_only and not p.requires_grad:
+                        continue
+                    total += p.numel()
+                return total, skipped
+
+            # Try exact counting first. If it fails, fall back to safe counting.
+            try:
+                vqvae_params = sum(p.numel() for p in vqvae.parameters() if p.requires_grad)
+                gpt_params   = sum(p.numel() for p in gpt.parameters() if p.requires_grad)
+            except ValueError:
+                # Force one explicit warm-up forward to materialize, then retry
+                try:
+                    # reuse last seen shapes for a deterministic warm-up (fast)
+                    zs = gpt.module.sample(x, cond=music_seq, shift=getattr(config, 'sample_shift', None))
+                    _  = vqvae.module.decode(zs)
+                    vqvae_params = sum(p.numel() for p in vqvae.parameters() if p.requires_grad)
+                    gpt_params   = sum(p.numel() for p in gpt.parameters() if p.requires_grad)
+                except ValueError:
+                    # Still lazy somewhere -> safe lower-bound count
+                    vqvae_params, vq_s = count_params_safe(vqvae)
+                    gpt_params,   g_s  = count_params_safe(gpt)
+                    print(f"[param count] Skipped uninitialized tensors -> VQVAE: {vq_s}, GPT: {g_s}")
+
+            total_params = vqvae_params + gpt_params
+            print(f"VQVAE params: {vqvae_params:,}")
+            print(f"GPT params:   {gpt_params:,}")
+            print(f"Total params: {total_params:,} (~{round(total_params/1e6)}M)")
+
             # 保存results为pkl文件
             # print("results.shape:", results.shape)
             # with open('./keshihua/results.pkl', 'wb') as f:
@@ -546,7 +592,7 @@ class MCTall():
         data = self.config.data
         self.expname = self.config.expname
         # self.experiment_dir = '/host_data/van/Danceba/' ### AIST++ dataset
-        self.experiment_dir = '/host_data/van/finedance/'  ### Finedance dataset
+        self.experiment_dir = '/host_data/van/Danceba/finedance/'  ### Finedance dataset
         self.expdir = os.path.join(self.experiment_dir, self.expname)
 
         # Helper function to create directories if they don't exist

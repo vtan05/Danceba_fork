@@ -11,7 +11,7 @@ from scipy.signal import argrelextrema
 
 import matplotlib.pyplot as plt 
 
-music_root = './data/aistpp_test_full_wav'
+music_root = '/host_data/van/Danceba/finedance/data_split/test'
 
 
 def get_mb(key, length=None):
@@ -41,7 +41,7 @@ def get_mb(key, length=None):
 
 
 def calc_db(keypoints, name=''):
-    keypoints = np.array(keypoints).reshape(-1, 24, 3)
+    keypoints = np.array(keypoints).reshape(-1, 22, 3)
     kinetic_vel = np.mean(np.sqrt(np.sum((keypoints[1:] - keypoints[:-1]) ** 2, axis=2)), axis=1)
     kinetic_vel = G(kinetic_vel, 5)
     motion_beats = argrelextrema(kinetic_vel, np.less)
@@ -80,7 +80,7 @@ if __name__ == '__main__':
     # gt_root = '/mnt/lustre/lisiyao1/dance/bailando/aist_features_zero_start'
     # pred_root = '/mnt/lustressd/lisiyao1/dance_experiements/experiments/sep_vqvae_root_global_vel_wav_acc_batch8/vis/pkl/ep000500'
     # pred_root = ''
-    pred_root = './experiments/cc_motion_gpt/eval/pkl/ep000000'
+    pred_root = '/host_data/van/Danceba/finedance/cc_motion_gpt/eval/pkl/ep000300'
     # pred_root = '/mnt/lustre/lisiyao1/dance/bailando/experiments/music_gpt_ds8_lbin512_c512_di3full/eval/pkl/ep000300'
     # pred_root = '/mnt/lustre/lisiyao1/dance/bailando/experiments/music_cross_cond_gpt_ds8_lbin512_c512_di3_init_0.01_beta0.9_full_dim768_3_9_9_ac_reward2_with_entropy_loss_alpha0.5_lr1e-4_no_pretrain/eval/pkl/ep000020'
     # pred_root = '/mnt/lustre/lisiyao1/dance/bailando/experiments/music_cross_cond_gpt_ds8_lbin512_c512_di3_init_0.01_beta0.9_full_dim768_3_9_9_ac_reward2_with_entropy_loss_alpha0.5_lr1e-4_no_pretrain/vis/pkl/ep000300'

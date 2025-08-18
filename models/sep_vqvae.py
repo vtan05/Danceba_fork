@@ -10,8 +10,12 @@ import torch.nn as nn
 from .vqvae import VQVAE
 
 
-smpl_down = [0, 1, 2, 4,  5, 7, 8, 10, 11]
-smpl_up = [3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+# smpl_down = [0, 1, 2, 4,  5, 7, 8, 10, 11]
+# smpl_up = [3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+
+#### Finedance (22 joints)
+smpl_down = [0, 1, 2, 4, 5, 7, 8, 10, 11]
+smpl_up =   [3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
 
 # def dont_update(params):
 #     for param in params:

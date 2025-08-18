@@ -125,8 +125,7 @@ def img2video(expdir, epoch, audio_path=None):
 
 
     dance_names = sorted(os.listdir(image_dir))
-    # audio_dir = "/host_data/van/Danceba/aist_plusplus_final/all_musics"  # change AIST
-    audio_dir = '/host_data/van/Danceba/finedance/music_wav' #  Finedance
+    audio_dir = "/host_data/van/Danceba/aist_plusplus_final/all_musics"  # change
     
     music_names = sorted(os.listdir(audio_dir))
     
@@ -140,18 +139,13 @@ def img2video(expdir, epoch, audio_path=None):
         
         name1 = name.replace('cAll', 'c02')
 
-        # ### For AIST++
-        # if 'cAll' in name:
-        #     music_name = name[-9:-5] + '.wav'
-        # else:
-        #     music_name = name + '.mp3'
-        #     audio_dir = 'extra/'
-        #     music_names = sorted(os.listdir(audio_dir))
-
-
-        ### For FineDance
-        music_name = name + '.wav'
-
+        if 'cAll' in name:
+            music_name = name[-9:-5] + '.wav'
+        else:
+            music_name = name + '.mp3'
+            audio_dir = 'extra/'
+            music_names = sorted(os.listdir(audio_dir))
+        
         if music_name in music_names:
             print('combining audio!')
             audio_dir_ = os.path.join(audio_dir, music_name)
@@ -245,7 +239,7 @@ def write2json_original(dances, dance_names, config, expdir, epoch):
     # print("Writing Json...")
     for i in tqdm(range(len(dances)),desc='Generating Jsons'):
         num_poses = dances[i].shape[0]
-        dances[i] = dances[i].reshape(num_poses, 22, 3)
+        dances[i] = dances[i].reshape(num_poses, 24, 3)
         dance_path = os.path.join(ep_path, dance_names[i])
         if not os.path.exists(dance_path):
             os.makedirs(dance_path)
@@ -411,12 +405,12 @@ def visualizeAndWrite(results,config,expdir,dance_names, epoch, quants=None):
                 # write2pkl((rotmat, root), dance_names[i], config.testing, expdir, epoch, rotmat=True)
 
                 rotmat = get_closest_rotmat(rotmat)
-                smpl_poses = rotmat2aa(rotmat).reshape(-1, 22, 3)
+                smpl_poses = rotmat2aa(rotmat).reshape(-1, 24, 3)
                 np_dance = smpl.forward(
                     global_orient=torch.from_numpy(smpl_poses[:, 0:1]).float(),
                     body_pose=torch.from_numpy(smpl_poses[:, 1:]).float(),
                     transl=torch.from_numpy(root).float(),
-                ).joints.detach().numpy()[:, 0:22, :]
+                ).joints.detach().numpy()[:, 0:24, :]
                 b = np_dance.shape[0]
                 np_dance = np_dance.reshape(b, -1)
                 dance_datas.append(np_dance)
@@ -426,7 +420,7 @@ def visualizeAndWrite(results,config,expdir,dance_names, epoch, quants=None):
                 #     print('We use mean pose!')
                 #     np_dance += mean_pose
                 root = np_dance[:, :3]
-                np_dance = np_dance + np.tile(root, (1, 22))
+                np_dance = np_dance + np.tile(root, (1, 24))
                 np_dance[:, :3] = root
 
                 
@@ -434,7 +428,7 @@ def visualizeAndWrite(results,config,expdir,dance_names, epoch, quants=None):
                 # write2pkl(np_dance, dance_names[i], config.testing, expdir, epoch, rotmat=True)
 
             root = np_dance[:, :3]
-            # np_dance = np_dance + np.tile(root, (1, 22))
+            # np_dance = np_dance + np.tile(root, (1, 24))
             np_dance[:, :3] = root
             # np_dance[2:-2] = (np_dance[:-4] + np_dance[1:-3] + np_dance[2:-2] +  np_dance[3:-1] + np_dance[4:]) / 5.0
             np_dances_original.append(np_dance)
@@ -447,47 +441,45 @@ def visualizeAndWrite(results,config,expdir,dance_names, epoch, quants=None):
             np_dance2[:, :, 0] /= 2.2
             np_dance_trans = np.zeros([b, 25, 2]).copy()
             
-            np_dance_trans[:, 0]  = np_dance2[:, 12]  # neck
-            np_dance_trans[:, 1]  = np_dance2[:, 9]   # chest 
+            # head
+            np_dance_trans[:, 0] = np_dance2[:, 12]
+            
+            #neck
+            np_dance_trans[:, 1] = np_dance2[:, 9]
+            
+            # left up
+            np_dance_trans[:, 2] = np_dance2[:, 16]
+            np_dance_trans[:, 3] = np_dance2[:, 18]
+            np_dance_trans[:, 4] = np_dance2[:, 20]
 
-            # left arm
-            np_dance_trans[:, 2]  = np_dance2[:, 16]  # lshoulder
-            np_dance_trans[:, 3]  = np_dance2[:, 18]  # lelbow
-            np_dance_trans[:, 4]  = np_dance2[:, 20]  # lwrist
+            # right up
+            np_dance_trans[:, 5] = np_dance2[:, 17]
+            np_dance_trans[:, 6] = np_dance2[:, 19]
+            np_dance_trans[:, 7] = np_dance2[:, 21]
 
-            # right arm
-            np_dance_trans[:, 5]  = np_dance2[:, 17]  # rshoulder
-            np_dance_trans[:, 6]  = np_dance2[:, 19]  # relbow
-            np_dance_trans[:, 7]  = np_dance2[:, 21]  # rwrist
+            
+            np_dance_trans[:, 8] = np_dance2[:, 0]
+            
+            np_dance_trans[:, 9] = np_dance2[:, 1]
+            np_dance_trans[:, 10] = np_dance2[:, 4]
+            np_dance_trans[:, 11] = np_dance2[:, 7]
 
-            # root
-            np_dance_trans[:, 8]  = np_dance2[:, 0]   # pelvis/root
+            np_dance_trans[:, 12] = np_dance2[:, 2]
+            np_dance_trans[:, 13] = np_dance2[:, 5]
+            np_dance_trans[:, 14] = np_dance2[:, 8]
 
-            # left leg
-            np_dance_trans[:, 9]  = np_dance2[:, 1]   # lhip
-            np_dance_trans[:, 10] = np_dance2[:, 4]   # lknee
-            np_dance_trans[:, 11] = np_dance2[:, 7]   # lankle
+            np_dance_trans[:, 15] = np_dance2[:, 15]
+            np_dance_trans[:, 16] = np_dance2[:, 15]
+            np_dance_trans[:, 17] = np_dance2[:, 15]
+            np_dance_trans[:, 18] = np_dance2[:, 15]
 
-            # right leg
-            np_dance_trans[:, 12] = np_dance2[:, 2]   # rhip
-            np_dance_trans[:, 13] = np_dance2[:, 5]   # rknee
-            np_dance_trans[:, 14] = np_dance2[:, 8]   # rankle
+            np_dance_trans[:, 19] = np_dance2[:, 11]
+            np_dance_trans[:, 20] = np_dance2[:, 11]
+            np_dance_trans[:, 21] = np_dance2[:, 8]
 
-            # repeated head (for visual extension)
-            np_dance_trans[:, 15] = np_dance2[:, 15]  # head
-            np_dance_trans[:, 16] = np_dance2[:, 15]  # head
-            np_dance_trans[:, 17] = np_dance2[:, 15]  # head
-            np_dance_trans[:, 18] = np_dance2[:, 15]  # head
-
-            # right toes/foot repeated
-            np_dance_trans[:, 19] = np_dance2[:, 11]  # rfoot
-            np_dance_trans[:, 20] = np_dance2[:, 11]  # rfoot
-            np_dance_trans[:, 21] = np_dance2[:, 8]   # rankle
-
-            # left toes/foot repeated
-            np_dance_trans[:, 22] = np_dance2[:, 10]   # lfoot
-            np_dance_trans[:, 23] = np_dance2[:, 10]   # lfoot
-            np_dance_trans[:, 24] = np_dance2[:, 7]   # lankle
+            np_dance_trans[:, 22] = np_dance2[:, 10]
+            np_dance_trans[:, 23] = np_dance2[:, 10]
+            np_dance_trans[:, 24] = np_dance2[:, 7]
 
             np_dances.append(np_dance_trans.reshape([b, 25*2]))
     else:
@@ -564,8 +556,8 @@ def load_data_aist(data_dir, interval=120, move=40, rotmat=False, external_wav=N
             np_music = np.array(sample_dict['music_array'])
 
             if external_wav is not None:
-                # wav_path = os.path.join(external_wav, fname.split('_')[-2] + '.json') ### AIST
-                wav_path = os.path.join(external_wav, fname[:-5] + '.json') ### Finedance
+                wav_path = os.path.join(external_wav, fname.split('_')[-2] + '.json') ### AIST
+                # wav_path = os.path.join(external_wav, fname[:-5] + '.json') ### Finedance
                 # print('load from external wav!')
                 with open(wav_path) as ff:
                     sample_dict_wav = json.loads(ff.read())
@@ -576,7 +568,7 @@ def load_data_aist(data_dir, interval=120, move=40, rotmat=False, external_wav=N
 
             if not rotmat:
                 root = np_dance[:, :3]  # the root
-                np_dance = np_dance - np.tile(root, (1, 22))  # Calculate relative offset with respect to root
+                np_dance = np_dance - np.tile(root, (1, 24))  # Calculate relative offset with respect to root
                 np_dance[:, :3] = root
 
             music_sample_rate = external_wav_rate if external_wav is not None else 1
@@ -693,7 +685,7 @@ def load_test_data_aist(data_dir, rotmat, move, external_wav=None, external_wav_
             np_music = np.array(sample_dict['music_array'])
             if external_wav is not None:
                 # print('load from external wav!')
-                wav_path = os.path.join(external_wav, fname[:-5] + '.json')
+                wav_path = os.path.join(external_wav, fname.split('_')[-2] + '.json')
                 with open(wav_path) as ff:
                     sample_dict_wav = json.loads(ff.read())
                     np_music = np.array(sample_dict_wav['music_array'])
@@ -702,7 +694,7 @@ def load_test_data_aist(data_dir, rotmat, move, external_wav=None, external_wav_
                 np_dance = np.array(sample_dict['motion_array'])
                 if not rotmat:
                     root = np_dance[:, :3]  # the root
-                    np_dance = np_dance - np.tile(root, (1, 22))  # Calculate relative offset with respect to root
+                    np_dance = np_dance - np.tile(root, (1, 24))  # Calculate relative offset with respect to root
                     np_dance[:, :3] = root
 
                 for kk in range((len(np_dance) // move + 1) * move - len(np_dance) ):
@@ -815,7 +807,7 @@ def check_data_distribution(data_dir, interval=240, rotmat=False):
 
             if not rotmat:
                 root = np_dance[:, :3]  # the root
-                np_dance = np_dance - np.tile(root, (1, 22))  # Calculate relative offset with respect to root
+                np_dance = np_dance - np.tile(root, (1, 24))  # Calculate relative offset with respect to root
                 np_dance[:, :3] = root
 
             
@@ -835,7 +827,7 @@ def check_data_distribution(data_dir, interval=240, rotmat=False):
                         dance_std.append(np.std(dance_sub_seq, axis=0))
                         dance_max.append(dance_sub_seq.max(0))
                         dance_min.append(dance_sub_seq.min(0))
-            # np_dance = np_dance.reshape(-1, 22, 3)
+            # np_dance = np_dance.reshape(-1, 24, 3)
 
     music_mean = np.array(music_mean).mean(0)
     music_std =  np.array(music_std).mean(0)
@@ -867,18 +859,18 @@ def visualizeAndWritefromPKL(pkl_root, config=None):
         np_dance = result
 
         root = np_dance[:, :3]
-        # np_dance = np_dance - np.tile(root, (1, 22))
+        # np_dance = np_dance - np.tile(root, (1, 24))
         np_dance[:, :3] = root
         np_dances_original.append(np_dance)
 
         if len(np_dance.shape) == 2:
             b, c = np_dance.shape
         else:
-            np_dance = np_dance[:, :22]
+            np_dance = np_dance[:, :24]
             b, c, _ = np_dance.shape
         # print(np_dance.shape)
         
-        np_dance = np_dance.reshape([b, 22, 3])
+        np_dance = np_dance.reshape([b, 24, 3])
         # b = min(b, 900)
         np_dance = np_dance[:b]
         np_dance -= np_dance[:1, :1, :]
@@ -890,47 +882,45 @@ def visualizeAndWritefromPKL(pkl_root, config=None):
         # b = 900
         np_dance_trans = np.zeros([b, 25, 2]).copy()
         
-        np_dance_trans[:, 0]  = np_dance2[:, 12]  # neck
-        np_dance_trans[:, 1]  = np_dance2[:, 9]   # chest 
+        # head
+        np_dance_trans[:, 0] = np_dance2[:, 12]
+        
+        #neck
+        np_dance_trans[:, 1] = np_dance2[:, 9]
+        
+        # left up
+        np_dance_trans[:, 2] = np_dance2[:, 16]
+        np_dance_trans[:, 3] = np_dance2[:, 18]
+        np_dance_trans[:, 4] = np_dance2[:, 20]
 
-        # left arm
-        np_dance_trans[:, 2]  = np_dance2[:, 16]  # lshoulder
-        np_dance_trans[:, 3]  = np_dance2[:, 18]  # lelbow
-        np_dance_trans[:, 4]  = np_dance2[:, 20]  # lwrist
+        # right up
+        np_dance_trans[:, 5] = np_dance2[:, 17]
+        np_dance_trans[:, 6] = np_dance2[:, 19]
+        np_dance_trans[:, 7] = np_dance2[:, 21]
 
-        # right arm
-        np_dance_trans[:, 5]  = np_dance2[:, 17]  # rshoulder
-        np_dance_trans[:, 6]  = np_dance2[:, 19]  # relbow
-        np_dance_trans[:, 7]  = np_dance2[:, 21]  # rwrist
+        
+        np_dance_trans[:, 8] = np_dance2[:, 0]
+        
+        np_dance_trans[:, 9] = np_dance2[:, 1]
+        np_dance_trans[:, 10] = np_dance2[:, 4]
+        np_dance_trans[:, 11] = np_dance2[:, 7]
 
-        # root
-        np_dance_trans[:, 8]  = np_dance2[:, 0]   # pelvis/root
+        np_dance_trans[:, 12] = np_dance2[:, 2]
+        np_dance_trans[:, 13] = np_dance2[:, 5]
+        np_dance_trans[:, 14] = np_dance2[:, 8]
 
-        # left leg
-        np_dance_trans[:, 9]  = np_dance2[:, 1]   # lhip
-        np_dance_trans[:, 10] = np_dance2[:, 4]   # lknee
-        np_dance_trans[:, 11] = np_dance2[:, 7]   # lankle
+        np_dance_trans[:, 15] = np_dance2[:, 15]
+        np_dance_trans[:, 16] = np_dance2[:, 15]
+        np_dance_trans[:, 17] = np_dance2[:, 15]
+        np_dance_trans[:, 18] = np_dance2[:, 15]
 
-        # right leg
-        np_dance_trans[:, 12] = np_dance2[:, 2]   # rhip
-        np_dance_trans[:, 13] = np_dance2[:, 5]   # rknee
-        np_dance_trans[:, 14] = np_dance2[:, 8]   # rankle
+        np_dance_trans[:, 19] = np_dance2[:, 11]
+        np_dance_trans[:, 20] = np_dance2[:, 11]
+        np_dance_trans[:, 21] = np_dance2[:, 8]
 
-        # repeated head (for visual extension)
-        np_dance_trans[:, 15] = np_dance2[:, 15]  # head
-        np_dance_trans[:, 16] = np_dance2[:, 15]  # head
-        np_dance_trans[:, 17] = np_dance2[:, 15]  # head
-        np_dance_trans[:, 18] = np_dance2[:, 15]  # head
-
-        # right toes/foot repeated
-        np_dance_trans[:, 19] = np_dance2[:, 11]  # rfoot
-        np_dance_trans[:, 20] = np_dance2[:, 11]  # rfoot
-        np_dance_trans[:, 21] = np_dance2[:, 8]   # rankle
-
-        # left toes/foot repeated
-        np_dance_trans[:, 22] = np_dance2[:, 10]   # lfoot
-        np_dance_trans[:, 23] = np_dance2[:, 10]   # lfoot
-        np_dance_trans[:, 24] = np_dance2[:, 7]   # lankle
+        np_dance_trans[:, 22] = np_dance2[:, 10]
+        np_dance_trans[:, 23] = np_dance2[:, 10]
+        np_dance_trans[:, 24] = np_dance2[:, 7]
 
         np_dances.append(np_dance_trans.reshape([b, 25*2]))
     
@@ -971,124 +961,124 @@ def npy2pkl(npy_file, pkl_root):
 
         
         
-# def pkl_to_19point(pkl_root, config=None):
-#     if config is None:
-#         config = VSConfig()
-#     dance_names = []
-#     np_dances = []
-#     np_dances_original = []
-#     dance_datas = []
-#     if not os.path.exists(os.path.join(pkl_root, '19points')):
-#         os.mkdir(os.path.join(pkl_root, '19points'))
-#     for pkl_name in os.listdir(pkl_root):
-#         print(pkl_name)
+def pkl_to_19point(pkl_root, config=None):
+    if config is None:
+        config = VSConfig()
+    dance_names = []
+    np_dances = []
+    np_dances_original = []
+    dance_datas = []
+    if not os.path.exists(os.path.join(pkl_root, '19points')):
+        os.mkdir(os.path.join(pkl_root, '19points'))
+    for pkl_name in os.listdir(pkl_root):
+        print(pkl_name)
 
-#         if os.path.isdir(os.path.join(pkl_root, pkl_name)):
-#             continue
-#         result = np.load(os.path.join(pkl_root, pkl_name), allow_pickle=True).item()['pred_position']
-#         dance_names.append(pkl_name)
+        if os.path.isdir(os.path.join(pkl_root, pkl_name)):
+            continue
+        result = np.load(os.path.join(pkl_root, pkl_name), allow_pickle=True).item()['pred_position']
+        dance_names.append(pkl_name)
 
-#         np_dance = result
+        np_dance = result
 
-#         root = np_dance[:, :3]
-#         # np_dance = np_dance + np.tile(root, (1, 22))
-#         np_dance[:, :3] = root
-#         np_dances_original.append(np_dance)
+        root = np_dance[:, :3]
+        # np_dance = np_dance + np.tile(root, (1, 24))
+        np_dance[:, :3] = root
+        np_dances_original.append(np_dance)
 
-#         if len(np_dance.shape) == 2:
-#             b, c = np_dance.shape
-#         else:
-#             b, c, _ = np_dance.shape
-#         # np_dance = np_dance.reshape([b, c//3, 3])
-#         # np_dance2 = np_dance[:, :, :2] / 2 - 0.5
-#         # np_dance2[:, :, 1] = np_dance2[:, :, 1]
-#         np_dance2 = np_dance.reshape(b, 22, 3)
-#         np_dance2[:, :, 1:] *= -1
-#         np_dance_trans = np.zeros([b, 19, 3]).copy()
+        if len(np_dance.shape) == 2:
+            b, c = np_dance.shape
+        else:
+            b, c, _ = np_dance.shape
+        # np_dance = np_dance.reshape([b, c//3, 3])
+        # np_dance2 = np_dance[:, :, :2] / 2 - 0.5
+        # np_dance2[:, :, 1] = np_dance2[:, :, 1]
+        np_dance2 = np_dance.reshape(b, 24, 3)
+        np_dance2[:, :, 1:] *= -1
+        np_dance_trans = np.zeros([b, 19, 3]).copy()
         
-#         # head
-#         np_dance_trans[:, 0] = np_dance2[:, 0]
-#         np_dance_trans[:, 1] = np_dance2[:, 2]
-#         np_dance_trans[:, 2] = np_dance2[:, 5]
-#         np_dance_trans[:, 3] = np_dance2[:, 8]
+        # head
+        np_dance_trans[:, 0] = np_dance2[:, 0]
+        np_dance_trans[:, 1] = np_dance2[:, 2]
+        np_dance_trans[:, 2] = np_dance2[:, 5]
+        np_dance_trans[:, 3] = np_dance2[:, 8]
 
-#         np_dance_trans[:, 4] = np_dance2[:, 1]
-#         np_dance_trans[:, 5] = np_dance2[:, 4]
-#         np_dance_trans[:, 6] = np_dance2[:, 7]
+        np_dance_trans[:, 4] = np_dance2[:, 1]
+        np_dance_trans[:, 5] = np_dance2[:, 4]
+        np_dance_trans[:, 6] = np_dance2[:, 7]
 
-#         np_dance_trans[:, 7] = np_dance2[:, 6]
-#         np_dance_trans[:, 8] = np_dance2[:, 12]
-#         np_dance_trans[:, 9] = np_dance2[:, 15]
-#         np_dance_trans[:, 10] =  np_dance2[:, 12] + 1.7 * (np_dance2[:, 12] - np_dance2[:, 6])
+        np_dance_trans[:, 7] = np_dance2[:, 6]
+        np_dance_trans[:, 8] = np_dance2[:, 12]
+        np_dance_trans[:, 9] = np_dance2[:, 15]
+        np_dance_trans[:, 10] =  np_dance2[:, 12] + 1.7 * (np_dance2[:, 12] - np_dance2[:, 6])
 
-#         np_dance_trans[:, 11] = np_dance2[:, 16]
-#         np_dance_trans[:, 12] = np_dance2[:, 18]
-#         np_dance_trans[:, 13] = np_dance2[:, 20]
-#         np_dance_trans[:, 14] = np_dance2[:, 17]
-#         np_dance_trans[:, 15] = np_dance2[:, 19]
-#         np_dance_trans[:, 16] = np_dance2[:, 21]
-#         np_dance_trans[:, 17] = np_dance2[:, 11]
-#         np_dance_trans[:, 18] = np_dance2[:, 10]
-#         # np_dance_trans[:, 0] = np_dance2[:, 0]
-
-        
-#         # #neck
-#         # np_dance_trans[:, 1] = np_dance2[:, 9]
-        
-#         # # left up
-#         # np_dance_trans[:, 2] = np_dance2[:, 16]
-#         # np_dance_trans[:, 3] = np_dance2[:, 18]
-#         # np_dance_trans[:, 4] = np_dance2[:, 20]
-
-#         # # right up
-#         # np_dance_trans[:, 5] = np_dance2[:, 17]
-#         # np_dance_trans[:, 6] = np_dance2[:, 19]
-#         # np_dance_trans[:, 7] = np_dance2[:, 21]
+        np_dance_trans[:, 11] = np_dance2[:, 16]
+        np_dance_trans[:, 12] = np_dance2[:, 18]
+        np_dance_trans[:, 13] = np_dance2[:, 20]
+        np_dance_trans[:, 14] = np_dance2[:, 17]
+        np_dance_trans[:, 15] = np_dance2[:, 19]
+        np_dance_trans[:, 16] = np_dance2[:, 21]
+        np_dance_trans[:, 17] = np_dance2[:, 11]
+        np_dance_trans[:, 18] = np_dance2[:, 10]
+        # np_dance_trans[:, 0] = np_dance2[:, 0]
 
         
-#         # np_dance_trans[:, 8] = np_dance2[:, 0]
+        # #neck
+        # np_dance_trans[:, 1] = np_dance2[:, 9]
         
-#         # np_dance_trans[:, 9] = np_dance2[:, 1]
-#         # np_dance_trans[:, 10] = np_dance2[:, 4]
-#         # np_dance_trans[:, 11] = np_dance2[:, 7]
+        # # left up
+        # np_dance_trans[:, 2] = np_dance2[:, 16]
+        # np_dance_trans[:, 3] = np_dance2[:, 18]
+        # np_dance_trans[:, 4] = np_dance2[:, 20]
 
-#         # np_dance_trans[:, 12] = np_dance2[:, 2]
-#         # np_dance_trans[:, 13] = np_dance2[:, 5]
-#         # np_dance_trans[:, 14] = np_dance2[:, 8]
+        # # right up
+        # np_dance_trans[:, 5] = np_dance2[:, 17]
+        # np_dance_trans[:, 6] = np_dance2[:, 19]
+        # np_dance_trans[:, 7] = np_dance2[:, 21]
 
-#         # np_dance_trans[:, 15] = np_dance2[:, 15]
-#         # np_dance_trans[:, 16] = np_dance2[:, 15]
-#         # np_dance_trans[:, 17] = np_dance2[:, 15]
-#         # np_dance_trans[:, 18] = np_dance2[:, 15]
+        
+        # np_dance_trans[:, 8] = np_dance2[:, 0]
+        
+        # np_dance_trans[:, 9] = np_dance2[:, 1]
+        # np_dance_trans[:, 10] = np_dance2[:, 4]
+        # np_dance_trans[:, 11] = np_dance2[:, 7]
 
-#         # np_dance_trans[:, 19] = np_dance2[:, 11]
-#         # np_dance_trans[:, 20] = np_dance2[:, 11]
-#         # np_dance_trans[:, 21] = np_dance2[:, 8]
+        # np_dance_trans[:, 12] = np_dance2[:, 2]
+        # np_dance_trans[:, 13] = np_dance2[:, 5]
+        # np_dance_trans[:, 14] = np_dance2[:, 8]
 
-#         # np_dance_trans[:, 22] = np_dance2[:, 10]
-#         # np_dance_trans[:, 23] = np_dance2[:, 10]
-#         # np_dance_trans[:, 24] = np_dance2[:, 7]
+        # np_dance_trans[:, 15] = np_dance2[:, 15]
+        # np_dance_trans[:, 16] = np_dance2[:, 15]
+        # np_dance_trans[:, 17] = np_dance2[:, 15]
+        # np_dance_trans[:, 18] = np_dance2[:, 15]
 
-#         # np_dances.append(np_dance_trans.reshape([b, 25*2]))
-#         with open(os.path.join(pkl_root, '19points', pkl_name + '.txt'), 'w+') as file:
-#             for tt in range(len(np_dance_trans)):
-#                 for jj in range(len(np_dance_trans[0])):
-#                     for kk in range(3):
-#                         file.write(str(np_dance_trans[tt][jj][kk].item()))
-#                         if ((jj != len(np_dance_trans[0]) - 1) or (kk != 2)):
-#                             file.write(' ')
-#                         else:
-#                             file.write('\n')
+        # np_dance_trans[:, 19] = np_dance2[:, 11]
+        # np_dance_trans[:, 20] = np_dance2[:, 11]
+        # np_dance_trans[:, 21] = np_dance2[:, 8]
 
-#     # write2pkl(dance_datas, dance_names, config.testing, expdir, epoch, rotmat=config.rotmat)
-#     # write2json(np_dances, dance_names,config, pkl_root, 123221)
-#     # visualize(config, dance_names, pkl_root, 123221, quants=None)
-#     # img2video(pkl_root,12321)
+        # np_dance_trans[:, 22] = np_dance2[:, 10]
+        # np_dance_trans[:, 23] = np_dance2[:, 10]
+        # np_dance_trans[:, 24] = np_dance2[:, 7]
 
-#     # json_dir = os.path.join(pkl_root, "jsons",f"ep{epoch:06d}")
-#     # img_dir = os.path.join(pkl_root, "imgs",f"ep{epoch:06d}")
-#     # if os.path.exists(json_dir):    
-#     #     shutil.rmtree(json_dir)
+        # np_dances.append(np_dance_trans.reshape([b, 25*2]))
+        with open(os.path.join(pkl_root, '19points', pkl_name + '.txt'), 'w+') as file:
+            for tt in range(len(np_dance_trans)):
+                for jj in range(len(np_dance_trans[0])):
+                    for kk in range(3):
+                        file.write(str(np_dance_trans[tt][jj][kk].item()))
+                        if ((jj != len(np_dance_trans[0]) - 1) or (kk != 2)):
+                            file.write(' ')
+                        else:
+                            file.write('\n')
+
+    # write2pkl(dance_datas, dance_names, config.testing, expdir, epoch, rotmat=config.rotmat)
+    # write2json(np_dances, dance_names,config, pkl_root, 123221)
+    # visualize(config, dance_names, pkl_root, 123221, quants=None)
+    # img2video(pkl_root,12321)
+
+    # json_dir = os.path.join(pkl_root, "jsons",f"ep{epoch:06d}")
+    # img_dir = os.path.join(pkl_root, "imgs",f"ep{epoch:06d}")
+    # if os.path.exists(json_dir):    
+    #     shutil.rmtree(json_dir)
 
 # def main():
 #     config = {'height': 1280, 'width': 720, 'ckpt_epoch': 10}

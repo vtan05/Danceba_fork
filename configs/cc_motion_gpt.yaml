@@ -2,14 +2,14 @@ batch_size: 32
 cuda: true
 data:
   data_type: None
-  name: finedance
+  name: aist
   seq_len: 240
-  test_dir: /host_data/van/finedance/data_split/test # change
-  train_dir: /host_data/van/finedance/data_split/train # change
+  test_dir: /host_data/van/Danceba/finedance/data_split/test # change
+  train_dir: /host_data/van/Danceba/finedance/data_split/train # change
 ds_rate: 8
 epoch: 300
 expname: cc_motion_gpt
-external_wav: /host_data/van/finedance/music_feat_7.5fps # change
+external_wav: /host_data/van/Danceba/finedance/music_feat_7.5fps # change
 external_wav_rate: 1
 global_vel: true
 log_per_updates: 1
@@ -17,7 +17,7 @@ loss_weight:
   mse_weight: 1
 move: 8
 music_normalize: false
-need_not_train_data: false # if train choose false
+need_not_train_data: true # if train choose false
 optimizer:
   kwargs:
     betas:
@@ -32,7 +32,7 @@ optimizer:
     - 400
   type: Adam
 rotmat: false
-save_per_epochs: 3
+save_per_epochs: 100
 seed: 42
 structure:
   down_half:
@@ -106,9 +106,9 @@ structure_generate:
   n_music: 438
   n_music_emb: 768
   name: CrossCondGPT2
-test_freq: 3
+test_freq: 100
 testing:
-  ckpt_epoch: 0  # change
+  ckpt_epoch: 300  # change
   height: 540
   width: 960
-vqvae_weight: /host_data/van/Danceba_finedance
+vqvae_weight: /host_data/van/Danceba/finedance/sep_vqvae_root/epoch_500.pt
