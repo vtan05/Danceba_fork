@@ -592,7 +592,8 @@ class MCTall():
         data = self.config.data
         self.expname = self.config.expname
         # self.experiment_dir = '/host_data/van/Danceba/' ### AIST++ dataset
-        self.experiment_dir = '/host_data/van/Danceba/finedance/'  ### Finedance dataset
+        # self.experiment_dir = '/host_data/van/Danceba/finedance/'  ### Finedance dataset
+        self.experiment_dir = '/host_data/van/Danceba/motorica'  ### Motorica dataset
         self.expdir = os.path.join(self.experiment_dir, self.expname)
 
         # Helper function to create directories if they don't exist

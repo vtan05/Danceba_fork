@@ -72,7 +72,8 @@ if __name__ == "__main__":
     '''
     Compute jitter metric for all motions and get mean
     '''
-    data_dir = "/host_data/van/Danceba/finedance/cc_motion_gpt/eval/pkl/ep000300"
+    # data_dir = "/host_data/van/Danceba/finedance/cc_motion_gpt/eval/pkl/ep000300"
+    data_dir = "/host_data/van/Danceba/motorica/cc_motion_gpt/eval/pkl/ep000300"
     
     # npy
     measure_jitter_npy(data_dir, fps)

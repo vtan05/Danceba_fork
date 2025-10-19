@@ -731,7 +731,9 @@ class SMPLX_Skeleton:
             local_q_165 = rotations.to(fk_device).float()
         elif rotations.shape[1] == 66:
             local_q_165 = torch.cat([rotations[:, :66], torch.zeros([rotations.shape[0], 99], device=fk_device, dtype=torch.float32)], dim=1).to(fk_device).float()
-        
+        elif rotations.shape[1] == 72:
+            local_q_165 = torch.cat([rotations[:, :72],torch.zeros([rotations.shape[0], 93], device=fk_device, dtype=torch.float32)], dim=1).to(fk_device).float()
+
         root_pos = root_positions.to(fk_device).float()
         assert local_q_165.shape[1] == 165
         B, C = local_q_165.shape

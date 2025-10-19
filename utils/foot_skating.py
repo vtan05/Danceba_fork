@@ -99,7 +99,8 @@ def calc_foot_skating_ratio(model_xp):
 
 
 if __name__ == '__main__':
-    test_dir = '/host_data/van/Danceba/finedance/cc_motion_gpt/eval/pkl/ep000300'
+    # test_dir = '/host_data/van/Danceba/finedance/cc_motion_gpt/eval/pkl/ep000300'
+    test_dir = '/host_data/van/Danceba/motorica/cc_motion_gpt/eval/pkl/ep000300'
 
     ground_height = 0
     left_ratio_list = []

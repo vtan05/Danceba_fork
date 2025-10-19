@@ -17,7 +17,7 @@ def normalize(feat, feat2):
     
     return (feat - mean) / (std + 1e-10), (feat2 - mean) / (std + 1e-10)
 
-def quantized_metrics(predicted_pkl_root, gt_pkl_root):
+def quantized_metrics(predicted_npz_root, gt_npz_root):
 
 
     pred_features_k = []
@@ -26,17 +26,17 @@ def quantized_metrics(predicted_pkl_root, gt_pkl_root):
     gt_freatures_m = []
 
 
-    # for pkl in os.listdir(predicted_pkl_root):
-    #     pred_features_k.append(np.load(os.path.join(predicted_pkl_root, 'kinetic_features', pkl))) 
-    #     pred_features_m.append(np.load(os.path.join(predicted_pkl_root, 'manual_features_new', pkl)))
-    #     gt_freatures_k.append(np.load(os.path.join(predicted_pkl_root, 'kinetic_features', pkl)))
-    #     gt_freatures_m.append(np.load(os.path.join(predicted_pkl_root, 'manual_features_new', pkl)))
+    # for npz in os.listdir(predicted_npz_root):
+    #     pred_features_k.append(np.load(os.path.join(predicted_npz_root, 'kinetic_features', npz))) 
+    #     pred_features_m.append(np.load(os.path.join(predicted_npz_root, 'manual_features_new', npz)))
+    #     gt_freatures_k.append(np.load(os.path.join(predicted_npz_root, 'kinetic_features', npz)))
+    #     gt_freatures_m.append(np.load(os.path.join(predicted_npz_root, 'manual_features_new', npz)))
 
-    pred_features_k = [np.load(os.path.join(predicted_pkl_root, 'kinetic_features', pkl)) for pkl in os.listdir(os.path.join(predicted_pkl_root, 'kinetic_features'))]
-    pred_features_m = [np.load(os.path.join(predicted_pkl_root, 'manual_features_new', pkl)) for pkl in os.listdir(os.path.join(predicted_pkl_root, 'manual_features_new'))]
+    pred_features_k = [np.load(os.path.join(predicted_npz_root, 'kinetic_features', npz)) for npz in os.listdir(os.path.join(predicted_npz_root, 'kinetic_features'))]
+    pred_features_m = [np.load(os.path.join(predicted_npz_root, 'manual_features_new', npz)) for npz in os.listdir(os.path.join(predicted_npz_root, 'manual_features_new'))]
     
-    gt_freatures_k = [np.load(os.path.join(gt_pkl_root, 'kinetic_features', pkl)) for pkl in os.listdir(os.path.join(gt_pkl_root, 'kinetic_features'))]
-    gt_freatures_m = [np.load(os.path.join(gt_pkl_root, 'manual_features_new', pkl)) for pkl in os.listdir(os.path.join(gt_pkl_root, 'manual_features_new'))]
+    gt_freatures_k = [np.load(os.path.join(gt_npz_root, 'kinetic_features', npz)) for npz in os.listdir(os.path.join(gt_npz_root, 'kinetic_features'))]
+    gt_freatures_m = [np.load(os.path.join(gt_npz_root, 'manual_features_new', npz)) for npz in os.listdir(os.path.join(gt_npz_root, 'manual_features_new'))]
     
     
     pred_features_k = np.stack(pred_features_k)  # Nx72 p40
@@ -162,11 +162,11 @@ def calc_and_save_feats(root):
     # gt_list = []
     pred_list = []
 
-    for pkl in os.listdir(root):
-        print(pkl)
-        if os.path.isdir(os.path.join(root, pkl)):
+    for npz in os.listdir(root):
+        print(npz)
+        if os.path.isdir(os.path.join(root, npz)):
             continue
-        joint3d = np.load(os.path.join(root, pkl), allow_pickle=True).item()['pred_position'][:1200,:]
+        joint3d = process_predmotion(os.path.join(root, npz))
         # print(extract_manual_features(joint3d.reshape(-1, 22, 3)))
         roott = joint3d[:1, :3]  # the root Tx72 (Tx(24x3))
         # print(roott)
@@ -176,8 +176,76 @@ def calc_and_save_feats(root):
         # print('==============bla============')
         # print(extract_manual_features(joint3d.reshape(-1, 22, 3)))
         # np_dance[:, :3] = root
-        np.save(os.path.join(root, 'kinetic_features', pkl), extract_kinetic_features(joint3d.reshape(-1, 22, 3)))
-        np.save(os.path.join(root, 'manual_features_new', pkl), extract_manual_features(joint3d.reshape(-1, 22, 3)))
+
+        joint3d_relative = joint3d.copy()
+        joint3d_relative = joint3d_relative.reshape(-1, 22, 3)
+        joint3d_relative[:, 1:, :] = joint3d_relative[:, 1:, :] - joint3d_relative[:, 0:1, :]
+
+        np.save(os.path.join(root, 'kinetic_features', npz), extract_kinetic_features(joint3d_relative.reshape(-1, 22, 3)))
+        np.save(os.path.join(root, 'manual_features_new', npz), extract_manual_features(joint3d_relative.reshape(-1, 22, 3)))
+
+
+def process_predmotion(motion_path):
+    import numpy as np
+    import torch
+
+    data = np.load(motion_path)
+
+    root_pos = data["trans"]  # [T, 3]
+    local_q = data["poses"]    # [T, 24*3]
+    print(local_q.shape)
+
+    smplx_model = SMPLX_Skeleton()
+
+    root_pos = torch.Tensor(root_pos)                          # [T, 3]
+    local_q = torch.Tensor(local_q).view(-1, 24, 3)            # [T, 24, 3]
+    length = root_pos.shape[0]
+
+    local_q_72 = local_q.view(length, -1)                     # [T, 72]
+    positions = smplx_model.forward(local_q_72, root_pos)     # [T, 24, 3]
+
+    # Step 6: Extract only 22 FineDance joints
+    smplx_to_22 = [
+        0,   # pelvis
+        1,   # left_hip
+        2,   # right_hip
+        3,   # spine1
+        4,   # left_knee
+        5,   # right_knee
+        6,   # spine2
+        7,   # left_ankle
+        8,   # right_ankle
+        9,   # spine3
+        10,  # left_foot
+        11,  # right_foot
+        12,  # neck
+        13,  # left_collar
+        14,  # right_collar
+        15,  # head
+        16,  # left_shoulder
+        17,  # right_shoulder
+        18,  # left_elbow
+        19,  # right_elbow
+        20,  # left_wrist
+        21   # right_wrist
+    ]
+
+    # just for reference since the 21 joints remove index 9 (DO NOT USE)
+    # smplx_to_21 = [
+    #     0,             # pelvis
+    #     1, 4, 7, 9,   # left hip, knee, ankle, foot
+    #     2, 5, 8, 10,   # right hip, knee, ankle, foot
+    #     3, 6,             # spine1, spine2, spine3
+    #     11, 14,        # neck, head
+    #     12, 13,        # left_collar, right_collar
+    #     15, 17, 19,    # left shoulder, elbow, wrist
+    #     16, 18, 20     # right shoulder, elbow, wrist
+    # ]
+
+    positions = positions[:, smplx_to_22, :]         # [T, 22, 3]
+    positions = positions.reshape(positions.shape[0], -1)  # [T, 63]
+    return positions.numpy()
+
 
 def calc_and_save_feats_gt(root):
     if not os.path.exists(os.path.join(root, 'kinetic_features')):
@@ -188,12 +256,12 @@ def calc_and_save_feats_gt(root):
     # gt_list = []
     pred_list = []
 
-    for pkl in os.listdir(root):
-        print(pkl)
-        if os.path.isdir(os.path.join(root, pkl)):
+    for npz in os.listdir(root):
+        print(npz)
+        if os.path.isdir(os.path.join(root, npz)):
             continue
-        joint3d = process_motion(os.path.join(root, pkl))
-        # joint3d = np.load(os.path.join(root, pkl), allow_pickle=True).item()['pred_position'][:1200,:]
+        joint3d = process_motion(os.path.join(root, npz))
+        # joint3d = np.load(os.path.join(root, npz), allow_pickle=True).item()['pred_position'][:1200,:]
         # print(extract_manual_features(joint3d.reshape(-1, 22, 3)))
         roott = joint3d[:1, :3]  # the root Tx72 (Tx(24x3))
         # print(roott)
@@ -203,8 +271,13 @@ def calc_and_save_feats_gt(root):
         # print('==============bla============')
         # print(extract_manual_features(joint3d.reshape(-1, 22, 3)))
         # np_dance[:, :3] = root
-        np.save(os.path.join(root, 'kinetic_features', pkl), extract_kinetic_features(joint3d.reshape(-1, 22, 3)))
-        np.save(os.path.join(root, 'manual_features_new', pkl), extract_manual_features(joint3d.reshape(-1, 22, 3)))
+
+        joint3d_relative = joint3d.copy()
+        joint3d_relative = joint3d_relative.reshape(-1, 22, 3)
+        joint3d_relative[:, 1:, :] = joint3d_relative[:, 1:, :] - joint3d_relative[:, 0:1, :]
+
+        np.save(os.path.join(root, 'kinetic_features', npz), extract_kinetic_features(joint3d_relative.reshape(-1, 22, 3)))
+        np.save(os.path.join(root, 'manual_features_new', npz), extract_manual_features(joint3d_relative.reshape(-1, 22, 3)))
 
 
 def ax_from_6v(q):
@@ -311,13 +384,12 @@ if __name__ == '__main__':
 
 
     gt_root = '/host_data/van/Danceba/finedance/motion'
-    pred_root = '/host_data/van/Danceba/finedance/cc_motion_gpt/eval/pkl/ep000300'
+    pred_root = '/host_data/van/bvh2smpl/finedance_lda_smpl'
     print('Calculating and saving features')
-    calc_and_save_feats_gt(gt_root)
     calc_and_save_feats(pred_root)
-
+    # calc_and_save_feats_gt(gt_root) # uncomment if not done yet
 
     print('Calculating metrics')
-    print(gt_root)
-    print(pred_root)
+    # print(gt_root)
+    # print(pred_root)
     print(quantized_metrics(pred_root, gt_root))

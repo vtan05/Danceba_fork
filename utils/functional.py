@@ -126,7 +126,8 @@ def img2video(expdir, epoch, audio_path=None):
 
     dance_names = sorted(os.listdir(image_dir))
     # audio_dir = "/host_data/van/Danceba/aist_plusplus_final/all_musics"  # change AIST
-    audio_dir = '/host_data/van/Danceba/finedance/music_wav' #  Finedance
+    # audio_dir = '/host_data/van/Danceba/finedance/music_wav' #  Finedance
+    audio_dir = '/host_data/van/Danceba/motorica/wav'  #  motorica
     
     music_names = sorted(os.listdir(audio_dir))
     
